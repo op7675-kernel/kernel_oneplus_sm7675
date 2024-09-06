@@ -133,10 +133,6 @@ def _define_kernel_build(
       kmi_enforced: boolean determining if the KMI contract should be enforced
     """
     out_list = [".config", "Module.symvers"]
-    if dtb_list:
-        out_list += dtb_list
-    if dtbo_list:
-        out_list += dtbo_list
 
     kernel_build(
         name = target,
@@ -246,7 +242,7 @@ def _define_image_build(
         vendor_dlkm_modules_list = ":{}_vendor_dlkm_modules_list_generated".format(target),
         system_dlkm_modules_blocklist = "modules.systemdlkm_blocklist.msm.{}".format(msm_target),
         vendor_dlkm_modules_blocklist = "modules.vendor_blocklist.msm.{}".format(msm_target),
-        dtbo_srcs = [":{}/".format(target) + d for d in dtbo_list] if dtbo_list else None,
+        dtbo_srcs = None,
         vendor_ramdisk_binaries = vendor_ramdisk_binaries,
         gki_ramdisk_prebuilt_binary = gki_ramdisk_prebuilt_binary,
         boot_image_outs = boot_image_outs,
@@ -457,7 +453,7 @@ def define_msm_la(
 
     dtb_list = get_dtb_list(msm_target)
     dtbo_list = get_dtbo_list(msm_target)
-    dtstree = get_dtstree(msm_target)
+    dtstree = None
     vendor_ramdisk_binaries = get_vendor_ramdisk_binaries(target)
     gki_ramdisk_prebuilt_binary = get_gki_ramdisk_prebuilt_binary()
     build_config_fragments = get_build_config_fragments(msm_target)
@@ -492,7 +488,7 @@ def define_msm_la(
         # When building a GKI target, we take the kernel and boot.img directly from
         # common, so no need to build here.
         build_boot = False if define_abi_targets else True,
-        build_dtbo = True if dtbo_list else False,
+        build_dtbo = False,
         build_initramfs = True,
         build_vendor_boot = True,
         dtbo_list = dtbo_list,
